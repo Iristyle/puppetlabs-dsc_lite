@@ -11,8 +11,9 @@
 2. [Prerequisites](#windows-system-prerequisites)
 3. [Setup](#setup)
 4. [Usage](#usage)
-  * [Using PSCredential or MSFT_Credential](#using-dsc-resources-with-puppet)
-  * [Using EmbeddedInstance or CimInstance](#using-dsc-resources-with-puppet)
+  * [Specifying a DSC Resource version](#specifying-a-dsc-resource-version)
+  * [Using PSCredential or MSFT_Credential](#using-pscredential-or-msft_credential)
+  * [Using EmbeddedInstance or CimInstance](#using-embeddedinstance-or-ciminstance)
   * [Handling Reboots with DSC](#handling-reboots-with-dsc)
 5. [Reference](#reference)
   * [Types and Providers](#types-and-providers)
@@ -57,7 +58,7 @@ WindowsFeature IIS {
 ~~~puppet
 dsc {'iis':
   dsc_resource_name        => 'WindowsFeature',
-  dsc_resource_module_name => 'PSDesiredStateConfiguration',
+  dsc_resource_module => 'PSDesiredStateConfiguration',
   dsc_resource_properties  => {
     ensure => 'present',
     name   => 'Web-Server',
@@ -74,7 +75,7 @@ A contrived, but simple example follows:
 ~~~puppet
 dsc {'foo':
   dsc_resource_name        => 'xFoo',
-  dsc_resource_module_name => 'xFooBar',
+  dsc_resource_module => 'xFooBar',
   dsc_resource_properties  => {
     ensure  => 'present',
     fooinfo => {
@@ -88,6 +89,40 @@ dsc {'foo':
 }
 ~~~
 
+### Specifying a DSC Resource version
+
+When there is more than one version installed for a given DSC Resource module, you must specify the version in your declaration. You can specify the version with similar syntax to a DSC Configuration script by using a hash containing the name and version of the DSC Resource module to use.
+
+~~~puppet
+dsc {'iis_server':
+  dsc_resource_name   => 'WindowsFeature',
+  dsc_resource_module => {
+    name    => 'PSDesiredStateConfiguration',
+    version => '1.1'
+  },
+  dsc_resource_properties  => {
+    ensure => 'present',
+    name   => 'Web-Server',
+  }
+}
+~~~
+
+Specifying the path to the DSC Resource module works as well:
+
+~~~puppet
+dsc {'iis_server':
+  dsc_resource_name   => 'WindowsFeature',
+  dsc_resource_module => {
+    name    => 'C:\Windows\system32\WindowsPowershell\v1.0\Modules\PsDesiredStateConfiguration\PSDesiredStateConfiguration.psd1',
+    version => '1.1'
+  },
+  dsc_resource_properties  => {
+    ensure => 'present',
+    name   => 'Web-Server',
+  }
+}
+~~~
+
 ### Using PSCredential or MSFT_Credential
 
 Specifying credentials in DSC Resources requires using a PSCredential object. The `dsc` type will automatically create a PSCredential if the `dsc_type` has `MSFT_Credential` as a value.
@@ -95,7 +130,7 @@ Specifying credentials in DSC Resources requires using a PSCredential object. Th
 ~~~puppet
 dsc {'foouser':
   dsc_resource_name        => 'User',
-  dsc_resource_module_name => 'PSDesiredStateConfiguration',
+  dsc_resource_module => 'PSDesiredStateConfiguration',
   dsc_resource_properties  => {
     'username'    => 'jane-doe',
     'description' => 'Jane Doe user',
@@ -122,7 +157,7 @@ For example, we'll create a new IIS website using the xWebSite DSC Resource, bou
 ~~~puppet
 dsc {'NewWebsite':
   dsc_resource_name        => 'xWebsite',
-  dsc_resource_module_name => 'xWebAdministration',
+  dsc_resource_module => 'xWebAdministration',
   dsc_resource_properties  => {
     ensure       => 'Present',
     state        => 'Started',
@@ -144,7 +179,7 @@ To show using more than one value in `dsc_properties`, let's create the same sit
 ~~~puppet
 dsc {'NewWebsite':
   dsc_resource_name        => 'xWebsite',
-  dsc_resource_module_name => 'xWebAdministration',
+  dsc_resource_module => 'xWebAdministration',
   dsc_resource_properties  => {
     ensure       => 'Present',
     state        => 'Started',
@@ -201,7 +236,7 @@ The name of the declaration. This has no affect on the DSC Resource declaration 
 
 The name of the DSC Resource to use. For example, the xRemoteFile DSC Resource.
 
-#### dsc_resource_module_name
+#### dsc_resource_module
 
 The name of the DSC Resource module to use. For example, the xPSDesiredStateConfiguration DSC Resource module contains the xRemoteFile DSC Resource.
 
