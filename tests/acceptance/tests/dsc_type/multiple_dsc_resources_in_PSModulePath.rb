@@ -97,7 +97,7 @@ dsc {'#{fake_name}':
   dsc_resource_module => {
     name    => 'PuppetFakeResource',
     version => '2.0',
-  }
+  },
   dsc_resource_properties => {
     ensure          => 'present',
     importantstuff  => '#{test_file_contents}',
@@ -110,12 +110,15 @@ MANIFEST
 confine_block(:to, :platform => 'windows') do
   agents.each do |agent|
     step 'Run Puppet Apply'
-    on(agent, puppet('apply'), :stdin => dsc_versioned_manifest, :acceptable_exit_codes => [1]) do |result|
+    on(agent, puppet('apply'), :stdin => dsc_versioned_manifest, :acceptable_exit_codes => [0]) do |result|
       assert_no_match(/Error:/, result.stderr, 'Unexpected error was detected!')
     end
 
     step 'Verify Results'
-    # if this file exists, 'absent' didn't work
-    on(agent, "test -f /cygdrive/c/#{fake_name}", :acceptable_exit_codes => [1])
+    # PuppetFakeResource always overwrites file at this path
+    # PuppetFakeResourc2 2.0 appends "v2" to the written file before "ImportantStuff"
+    on(agent, "cat /cygdrive/c/#{fake_name}", :acceptable_exit_codes => [0]) do |result|
+      assert_match(/^v2#{test_file_contents}/, result.stdout, 'PuppetFakeResource File contents incorrect!')
+    end
   end
 end
