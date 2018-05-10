@@ -35,18 +35,6 @@ EOT
   Puppet (including 3.x), or to a Puppet version newer than 3.x.
   UPGRADE
 
-  DSC_LITE_MODULE_POWERSHELL_UPGRADE_MSG = <<-UPGRADE
-  Currently, the dsc module has reduced functionality on this agent
-  due to one or more of the following conditions:
-  - A PowerShell less than 5.0
-    The dsc module requires PowerShell v5.0 or greater to function. THe cmdlet
-    Invoke-DscResource was introduced in v5.0, and is necessary for the dsc module
-    to work
-  To enable these improvements, it is suggested to upgrade to any x64 version of
-  Puppet (including 3.x), or to a Puppet version newer than 3.x and ensure you
-  have at least PowerShell v5.0 installed.
-  UPGRADE
-
   def self.upgrade_message
     Puppet.warning DSC_LITE_MODULE_PUPPET_UPGRADE_MSG if !@upgrade_warning_issued
     @upgrade_warning_issued = true
@@ -92,8 +80,6 @@ EOT
     script_content = ps_script_content('test')
     Puppet.debug "\n" + script_content
 
-    fail DSC_LITE_MODULE_POWERSHELL_UPGRADE_MSG if !PuppetX::DscLite::PowerShellManager.compatible_version_of_powershell?
-
     if !PuppetX::DscLite::PowerShellManager.supported?
       self.class.upgrade_message
       output = powershell(self.class.powershell_args, script_content)
@@ -114,8 +100,6 @@ EOT
     script_content = ps_script_content('set')
     Puppet.debug "\n" + script_content
 
-    fail DSC_LITE_MODULE_POWERSHELL_UPGRADE_MSG if !PuppetX::DscLite::PowerShellManager.compatible_version_of_powershell?
-
     if !PuppetX::DscLite::PowerShellManager.supported?
       self.class.upgrade_message
       output = powershell(self.class.powershell_args, script_content)
@@ -135,8 +119,6 @@ EOT
   def destroy
     script_content = ps_script_content('set')
     Puppet.debug "\n" + script_content
-
-    fail DSC_LITE_MODULE_POWERSHELL_UPGRADE_MSG if !PuppetX::DscLite::PowerShellManager.compatible_version_of_powershell?
 
     if !PuppetX::DscLite::PowerShellManager.supported?
       self.class.upgrade_message

@@ -2,7 +2,15 @@ require 'rexml/document'
 require 'securerandom'
 require 'open3'
 require 'base64'
-require File.join(File.dirname(__FILE__), 'compatible_powershell_version')
+# TODO: 2 questions about this style require
+# * does this work properly with a PMT installed module with `puppet apply`
+# * does this work properly with a modulesync'd module with `puppet agent`
+# TODO: hopefully this simple require for the feature is enough to make this work in all scenarios
+require 'puppet/feature/dsc_lite'
+# a relative require is an alternative in the event it doesn't work
+# require_relative '../../../puppet/feature/dsc_lite'
+
+
 
 module PuppetX
   module DscLite
@@ -29,7 +37,7 @@ module PuppetX
       end
 
       def self.compatible_version_of_powershell?
-        @compatible_powershell_version ||= PuppetX::PuppetLabs::DscLite::CompatiblePowerShellVersion.compatible_version?
+        @compatible_powershell_version ||= Puppet.features.dsc_lite?
       end
 
       def self.supported?
