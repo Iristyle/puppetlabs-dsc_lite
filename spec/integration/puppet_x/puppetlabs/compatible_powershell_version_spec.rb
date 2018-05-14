@@ -3,7 +3,6 @@ require 'spec_helper'
 require 'puppet/type'
 require 'puppet_x/puppetlabs/dsc_lite/compatible_powershell_version'
 
-# TODO: can something like this code be ported into a feature spec?
 describe PuppetX::PuppetLabs::DscLite::CompatiblePowerShellVersion, :if => Puppet::Util::Platform.windows? do
   before(:each) do
     @ps = PuppetX::PuppetLabs::DscLite::CompatiblePowerShellVersion

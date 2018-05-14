@@ -2,13 +2,7 @@ require 'rexml/document'
 require 'securerandom'
 require 'open3'
 require 'base64'
-# TODO: 2 questions about this style require
-# * does this work properly with a PMT installed module with `puppet apply`
-# * does this work properly with a modulesync'd module with `puppet agent`
-# TODO: hopefully this simple require for the feature is enough to make this work in all scenarios
 require 'puppet/feature/dsc_lite'
-# a relative require is an alternative in the event it doesn't work
-# require_relative '../../../puppet/feature/dsc_lite'
 
 
 
